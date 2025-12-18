@@ -1,37 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using Shouldly;
-using Xunit;
-
-namespace Sharp7.Tests
+﻿namespace Sharp7.Tests
 {
     public class TestUtilities
     {
         [Theory]
-        [InlineData(1,1)] 
-        [InlineData(2,1)] 
-        [InlineData(3,1)] 
-        [InlineData(4,2)] 
-        [InlineData(5,2)] 
-        [InlineData(6,4)] 
-        [InlineData(7,4)] 
-        [InlineData(8,4)] 
-        [InlineData(0x1D,2)] 
-        [InlineData(0x1C,2)] 
-        [InlineData(0,0)] 
+        [InlineData(1, 1)]
+        [InlineData(2, 1)]
+        [InlineData(3, 1)]
+        [InlineData(4, 2)]
+        [InlineData(5, 2)]
+        [InlineData(6, 4)]
+        [InlineData(7, 4)]
+        [InlineData(8, 4)]
+        [InlineData(0x1D, 2)]
+        [InlineData(0x1C, 2)]
+        [InlineData(0, 0)]
         public void TestDataSizeByte(int wordLength, int expected) { S7.DataSizeByte(wordLength).ShouldBe(expected); }
-        [Fact] public void TestGetBitAt() { S7.GetBitAt(new byte[] {1,2,3,4}, 0, 0).ShouldBe(true); }
-        [Fact] public void TestSetBitAt() {
-            var buffer = new byte[] {1,2,3,4};
+        [Fact] public void TestGetBitAt() { S7.GetBitAt(new byte[] { 1, 2, 3, 4 }, 0, 0).ShouldBe(true); }
+        [Fact]
+        public void TestSetBitAt()
+        {
+            var buffer = new byte[] { 1, 2, 3, 4 };
             S7.SetBitAt(buffer, 0, 1, true);
-            buffer.ShouldBe(new byte[] {3, 2, 3, 4});
+            buffer.ShouldBe(new byte[] { 3, 2, 3, 4 });
         }
-        [Fact] public void TestSetBitAtAsExtensionMethod() {
-            var buffer = new byte[] {1,2,3,4};
+        [Fact]
+        public void TestSetBitAtAsExtensionMethod()
+        {
+            var buffer = new byte[] { 1, 2, 3, 4 };
             buffer.SetBitAt(0, 1, true);
-            buffer.ShouldBe(new byte[] {3, 2, 3, 4});
+            buffer.ShouldBe(new byte[] { 3, 2, 3, 4 });
         }
 
         //unsigned
@@ -42,7 +39,7 @@ namespace Sharp7.Tests
         public void TestGetUSIntAt(byte[] buffer, int pos, byte expected) { S7.GetUSIntAt(buffer, pos).ShouldBe(expected); }
         [Theory]
         [InlineData(new byte[] { 0, 2, 3, 4 }, 0, 1, new byte[] { 1, 2, 3, 4 })]
-        [InlineData(new byte[] { 0, 2, 3, 4 }, 0, 127, new byte[] { 127, 2, 3, 4 })] 
+        [InlineData(new byte[] { 0, 2, 3, 4 }, 0, 127, new byte[] { 127, 2, 3, 4 })]
         public void TestSetUSIntAt(byte[] buffer, int pos, byte value, byte[] expected)
         {
             S7.SetUSIntAt(buffer, pos, value);
@@ -50,33 +47,33 @@ namespace Sharp7.Tests
         }
 
         [Theory]
-        [InlineData( new byte[] { 1, 1, 0, 0 }, 0, 257)]
+        [InlineData(new byte[] { 1, 1, 0, 0 }, 0, 257)]
         public void TestGetUIntAt(byte[] buffer, int pos, ushort expected) { S7.GetUIntAt(buffer, pos).ShouldBe(expected); }
 
         [Theory]
-        [InlineData(new byte[]{0,0,0,0}, 0, 1, new byte[] {0,1,0,0})]
+        [InlineData(new byte[] { 0, 0, 0, 0 }, 0, 1, new byte[] { 0, 1, 0, 0 })]
         public void TestSetUIntAt(byte[] buffer, int pos, ushort value, byte[] expected)
         {
             S7.SetUIntAt(buffer, pos, value);
             buffer.ShouldBe(expected);
         }
         [Theory]
-        [InlineData(new byte[] { 0, 0, 0, 2 }, 0, 2)] 
+        [InlineData(new byte[] { 0, 0, 0, 2 }, 0, 2)]
         public void TestGetUDIntAt(byte[] buffer, int pos, uint expected) { S7.GetUDIntAt(buffer, pos).ShouldBe(expected); }
 
         [Theory]
-        [InlineData(new byte[] {0, 0, 0, 0}, 0, 1, new byte[] {0, 0, 0, 1})]
+        [InlineData(new byte[] { 0, 0, 0, 0 }, 0, 1, new byte[] { 0, 0, 0, 1 })]
         public void TestSetUDIntAt(byte[] buffer, int pos, uint value, byte[] expected)
         {
             S7.SetUDIntAt(buffer, pos, value);
             buffer.ShouldBe(expected);
         }
         [Theory]
-        [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 2 }, 0, 2L)] 
+        [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 2 }, 0, 2L)]
         public void TestGetULIntAt(byte[] buffer, int pos, ulong expected) { S7.GetULIntAt(buffer, pos).ShouldBe(expected); }
 
         [Theory]
-        [InlineData(new byte[] {0, 0, 0, 0, 0, 0, 0, 0}, 0, 1L, new byte[] { 0, 0, 0, 0, 0, 0, 0, 1})]
+        [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }, 0, 1L, new byte[] { 0, 0, 0, 0, 0, 0, 0, 1 })]
         public void TestSetULIntAt(byte[] buffer, int pos, ulong value, byte[] expected)
         {
             S7.SetULintAt(buffer, pos, value);
@@ -121,7 +118,7 @@ namespace Sharp7.Tests
             buffer.ShouldBe(expected);
         }
         [Theory]
-        [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 2 }, 0, 2L)] 
+        [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 2 }, 0, 2L)]
         public void TestGetLIntAt(byte[] buffer, int pos, long expected) { S7.GetLIntAt(buffer, pos).ShouldBe(expected); }
 
         [Theory]
@@ -133,7 +130,7 @@ namespace Sharp7.Tests
         }
 
 
-        [Fact] public void TestGetByteAt() { S7.GetByteAt(new byte[] {1,2,3,4}, 1).ShouldBe((byte)2); }
+        [Fact] public void TestGetByteAt() { S7.GetByteAt(new byte[] { 1, 2, 3, 4 }, 1).ShouldBe((byte)2); }
 
         [Fact]
         public void TestSetByteAt()
@@ -144,14 +141,14 @@ namespace Sharp7.Tests
         }
 
         [Theory]
-        [InlineData(new byte[] {0, 2, 0, 0, 0, 0, 0, 0}, 0, 2)]
+        [InlineData(new byte[] { 0, 2, 0, 0, 0, 0, 0, 0 }, 0, 2)]
         public void TestGetWordAt(byte[] buffer, int pos, ushort expected)
         {
             S7.GetWordAt(buffer, pos).ShouldBe(expected);
         }
 
         [Theory]
-        [InlineData(new byte[] {0, 0, 0, 0, 0, 0, 0, 0}, 0, 1, new byte[] {0, 1, 0, 0, 0, 0, 0, 0})]
+        [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }, 0, 1, new byte[] { 0, 1, 0, 0, 0, 0, 0, 0 })]
         public void TestSetWordAt(byte[] buffer, int pos, ushort value, byte[] expected)
         {
             S7.SetWordAt(buffer, pos, value);
@@ -204,7 +201,7 @@ namespace Sharp7.Tests
         }
 
         [Theory]
-        [InlineData(new byte[] { 64, 128, 0, 0, 0, 0, 0, 0}, 0, 512d)]
+        [InlineData(new byte[] { 64, 128, 0, 0, 0, 0, 0, 0 }, 0, 512d)]
         public void TestGetLRealAt(byte[] buffer, int pos, double expected)
         {
             S7.GetLRealAt(buffer, pos).ShouldBe(expected);
@@ -220,7 +217,7 @@ namespace Sharp7.Tests
 
 
         [Theory]
-        [InlineData(new byte[] {16,17,18,19,20,21,0,6})]
+        [InlineData(new byte[] { 16, 17, 18, 19, 20, 21, 0, 6 })]
         public void TestGetDateTimeAt(byte[] buffer)
         {
             var time = new DateTime(2010, 11, 12, 13, 14, 15);
@@ -228,7 +225,7 @@ namespace Sharp7.Tests
         }
 
         [Theory]
-        [InlineData(new byte[] {16, 17, 18, 19, 20, 21, 0, 6})]
+        [InlineData(new byte[] { 16, 17, 18, 19, 20, 21, 0, 6 })]
         public void TestSetDateTimeAt(byte[] expected)
         {
             var time = new DateTime(2010, 11, 12, 13, 14, 15);
@@ -238,24 +235,24 @@ namespace Sharp7.Tests
         }
 
         [Theory]
-        [InlineData(new byte[] {0,2})]
+        [InlineData(new byte[] { 0, 2 })]
         public void TestGetDateAt(byte[] buffer)
         {
             var date = new DateTime(1990, 1, 3);
             S7.GetDateAt(buffer, 0).ShouldBe(date);
         }
         [Theory]
-        [InlineData(new byte[] { 0,3 })]
+        [InlineData(new byte[] { 0, 3 })]
         public void TestSetDateAt(byte[] expected)
         {
             var buffer = new byte[2];
-            var date = new DateTime(1990,1,4);
+            var date = new DateTime(1990, 1, 4);
             S7.SetDateAt(buffer, 0, date);
             buffer.ShouldBe(expected);
         }
 
         [Theory]
-        [InlineData(new byte[] {0, 0,0,2}, 2)]
+        [InlineData(new byte[] { 0, 0, 0, 2 }, 2)]
         public void TestGetTODAt(byte[] buffer, int milliseconds)
         {
             S7.GetTODAt(buffer, 0).ShouldBe(new DateTime(0).AddMilliseconds(milliseconds));
@@ -264,7 +261,7 @@ namespace Sharp7.Tests
         }
 
         [Theory]
-        [InlineData(new byte[] {0, 0,0,2}, 2)]
+        [InlineData(new byte[] { 0, 0, 0, 2 }, 2)]
         public void TestSetTODAt(byte[] expected, int milliseconds)
         {
             var buffer = new byte[4];
@@ -275,7 +272,7 @@ namespace Sharp7.Tests
             buffer.ShouldBe(expected);
         }
         [Theory]
-        [InlineData(new byte[] { 0, 0, 0, 0,0,0,0,200 }, 2)]
+        [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 200 }, 2)]
         public void TestGetLTODAt(byte[] buffer, int ticks)
         {
             S7.GetLTODAt(buffer, 0).ShouldBe(new DateTime(ticks));
@@ -284,7 +281,7 @@ namespace Sharp7.Tests
         }
 
         [Theory]
-        [InlineData(new byte[] { 0, 0, 0, 0,0,0,0,200 }, 2)]
+        [InlineData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 200 }, 2)]
         public void TestSetLTODAt(byte[] expected, int ticks)
         {
             var buffer = new byte[8];
@@ -307,7 +304,7 @@ namespace Sharp7.Tests
         public void TestSetLDTAt(byte[] expected, int ticks)
         {
             var buffer = new byte[8];
-            S7.SetLDTAt(buffer, 0, new DateTime(1970,1,1).AddTicks(ticks));
+            S7.SetLDTAt(buffer, 0, new DateTime(1970, 1, 1).AddTicks(ticks));
             buffer.ShouldBe(expected);
         }
 
@@ -315,7 +312,7 @@ namespace Sharp7.Tests
         [InlineData(new byte[] { 10, 10, 10, 10, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 })]
         public void TestGetDTLAt(byte[] buffer)
         {
-            S7.GetDTLAt(buffer, 0).ShouldBe(new DateTime(2570, 10, 10,10,10,0));
+            S7.GetDTLAt(buffer, 0).ShouldBe(new DateTime(2570, 10, 10, 10, 10, 0));
         }
 
         [Theory]
@@ -330,68 +327,68 @@ namespace Sharp7.Tests
 
 
         [Theory]
-        [InlineData(new byte[] {0, 3, 55,55,55,0,0,0,0,0}, "777")]
+        [InlineData(new byte[] { 0, 3, 55, 55, 55, 0, 0, 0, 0, 0 }, "777")]
         public void TestGetStringAt(byte[] buffer, string expected)
         {
             S7.GetStringAt(buffer, 0).ShouldBe(expected);
         }
 
         [Theory]
-        [InlineData("888", 200, new byte[] {200, 3, 56,56,56})]
-        [InlineData("888888", 5, new byte[] {5, 5, 56,56,56,56,56})]
+        [InlineData("888", 200, new byte[] { 200, 3, 56, 56, 56 })]
+        [InlineData("888888", 5, new byte[] { 5, 5, 56, 56, 56, 56, 56 })]
         public void TestSetStringAt(string test, int maxLength, byte[] expected)
         {
-            var buffer = new byte[maxLength+2];
+            var buffer = new byte[maxLength + 2];
             S7.SetStringAt(buffer, 0, maxLength, test);
             buffer.Take(expected.Length).ToArray().ShouldBe(expected);
         }
-        
+
         [Theory]
         [InlineData(new byte[] { 55, 55, 55 }, "777")]
         [InlineData(new byte[] { 56, 56, 56 }, "888")]
         public void TestGetCharsAt(byte[] buffer, string expected) { S7.GetCharsAt(buffer, 0, buffer.Length).ShouldBe(expected); }
 
         [Theory]
-        [InlineData("777", new byte[] {55, 55, 55})]
-        [InlineData("888", new byte[] {56, 56, 56})]
+        [InlineData("777", new byte[] { 55, 55, 55 })]
+        [InlineData("888", new byte[] { 56, 56, 56 })]
         public void TestSetCharsAt(string chars, byte[] expected)
         {
             var buffer = new byte[chars.Length];
-            S7.SetCharsAt(buffer, 0, chars); 
+            S7.SetCharsAt(buffer, 0, chars);
             buffer.ShouldBe(expected);
         }
 
         [Theory]
-        [InlineData(12, 1200)] 
-        [InlineData(13, 1300)] 
+        [InlineData(12, 1200)]
+        [InlineData(13, 1300)]
         public void TestGetCounter(ushort value, int expected) { S7.GetCounter(value).ShouldBe(expected); }
 
         [Theory]
-        [InlineData(new ushort[]{12},0, 1200)]
-        [InlineData(new ushort[]{0,12},1, 1200)]
+        [InlineData(new ushort[] { 12 }, 0, 1200)]
+        [InlineData(new ushort[] { 0, 12 }, 1, 1200)]
         public void TestGetCounterAt(ushort[] buffer, int index, int expected) { S7.GetCounterAt(buffer, index).ShouldBe(expected); }
 
         [Theory]
         [InlineData(1200, 18)]
-        [InlineData(1300, 19)] 
+        [InlineData(1300, 19)]
         public void TestToCounter(int value, ushort expected) { S7.ToCounter(value).ShouldBe(expected); }
 
         [Theory]
-        [InlineData(0, 1200, new ushort[] {18,0})]
-        [InlineData(1, 1200, new ushort[] {0, 18})]
+        [InlineData(0, 1200, new ushort[] { 18, 0 })]
+        [InlineData(1, 1200, new ushort[] { 0, 18 })]
         public void TestSetCounterAt(int index, int counter, ushort[] expected)
         {
             var buffer = new ushort[2];
-            S7.SetCounterAt(buffer, index, counter); 
+            S7.SetCounterAt(buffer, index, counter);
             buffer.ShouldBe(expected);
         }
 
         [Theory]
-        [InlineData(new byte[] { 18, 0,0,0,0,4,5,6,7,8,0,0,0,0,0,0,0,0,0 })] 
+        [InlineData(new byte[] { 18, 0, 0, 0, 0, 4, 5, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0 })]
         public void TestGetS7TimerAt(byte[] buffer) { new S7TimerEqualityComparer().Equals(S7.GetS7TimerAt(buffer, 0), new S7Timer(buffer.Take(12).ToArray())).ShouldBe(true); }
 
         [Theory]
-        [InlineData(10,new byte[] { 0, 0, 0, 10 })]
+        [InlineData(10, new byte[] { 0, 0, 0, 10 })]
         public void TestSetS7TimespanAt(int milliseconds, byte[] expected)
         {
             var buffer = new byte[8];
@@ -411,10 +408,26 @@ namespace Sharp7.Tests
     {
         public bool Equals(S7Timer x, S7Timer y)
         {
-            if (ReferenceEquals(x, y)) return true;
-            if (ReferenceEquals(x, null)) return false;
-            if (ReferenceEquals(y, null)) return false;
-            if (x.GetType() != y.GetType()) return false;
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(x, null))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            if (x.GetType() != y.GetType())
+            {
+                return false;
+            }
+
             return x.PT.Equals(y.PT) && x.ET.Equals(y.ET) && x.IN == y.IN && x.Q == y.Q;
         }
 

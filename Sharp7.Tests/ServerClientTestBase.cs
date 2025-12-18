@@ -1,26 +1,21 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Shouldly;
-
 namespace Sharp7.Tests
 {
     public class ServerClientTestBase : ServerTestBase, IDisposable
     {
         private S7Client client;
-        public S7Client Client => client;
+        public S7Client Client => this.client;
 
         public ServerClientTestBase() : base()
         {
-            client = new S7Client("Test Plc");
-            var rc = client.ConnectTo(Localhost, 0, 2);
+            this.client = new S7Client("Test Plc");
+            var rc = this.client.ConnectTo(this.Localhost, 0, 2);
             rc.ShouldBe(Sharp7.S7Consts.ResultOK);
         }
 
 
         public new void Dispose()
         {
-            client.Disconnect();
+            this.client.Disconnect();
             base.Dispose();
         }
     }

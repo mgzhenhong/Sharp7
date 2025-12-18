@@ -1,8 +1,3 @@
-using System;
-using System.Linq;
-using Shouldly;
-using Xunit;
-
 namespace Sharp7.Tests
 {
     public class ClientWithoutServer
@@ -11,79 +6,79 @@ namespace Sharp7.Tests
 
         public ClientWithoutServer()
         {
-            client = new S7Client();
+            this.client = new S7Client();
         }
 
         public void Dispose()
         {
-            client.Disconnect();
+            this.client.Disconnect();
         }
 
         [Fact]
         public void CannotConnectTest()
         {
-            var rc = client.ConnectTo("127.0.1.2", 0, 2);
+            var rc = this.client.ConnectTo("127.0.1.2", 0, 2);
             rc.ShouldBe(Sharp7.S7Consts.errTCPConnectionFailed);
         }
 
         [Fact]
         public void GetLastErrorTest()
         {
-            var rc = client.LastError();
+            var rc = this.client.LastError();
             rc.ShouldBe(0);
         }
 
         [Fact]
         public void GetRequestedPduTest()
         {
-            var rc = client.RequestedPduLength();
+            var rc = this.client.RequestedPduLength();
             rc.ShouldBe(480);
-            client.PduSizeRequested.ShouldBe(480);
+            this.client.PduSizeRequested.ShouldBe(480);
         }
 
         [Fact]
         public void GetNegotiatedPduTest()
         {
-            var rc = client.NegotiatedPduLength();
+            var rc = this.client.NegotiatedPduLength();
             rc.ShouldBe(0);
-            client.PduSizeNegotiated.ShouldBe(0);
+            this.client.PduSizeNegotiated.ShouldBe(0);
         }
 
         [Fact]
         public void SetPlcPortTest()
         {
-            client.PLCPort = 104;
-            client.PLCPort.ShouldBe(104);
+            this.client.PLCPort = 104;
+            this.client.PLCPort.ShouldBe(104);
         }
 
         [Fact]
         public void SetPduRequestedTest()
         {
-            client.PduSizeRequested = 239;
-            client.PduSizeRequested.ShouldBe(240);
-            client.PduSizeRequested = 961;
-            client.PduSizeRequested.ShouldBe(960);
-            client.PduSizeRequested = 481;
-            client.PduSizeRequested.ShouldBe(481);
+            this.client.PduSizeRequested = 239;
+            this.client.PduSizeRequested.ShouldBe(240);
+            this.client.PduSizeRequested = 961;
+            this.client.PduSizeRequested.ShouldBe(960);
+            this.client.PduSizeRequested = 481;
+            this.client.PduSizeRequested.ShouldBe(481);
         }
 
         [Fact]
         public void SetTimeoutTest()
         {
-            client.ConnTimeout = 239;
-            client.ConnTimeout.ShouldBe(239);
+            this.client.ConnTimeout = 239;
+            this.client.ConnTimeout.ShouldBe(239);
 
-            client.RecvTimeout = 239;
-            client.RecvTimeout.ShouldBe(239);
+            this.client.RecvTimeout = 239;
+            this.client.RecvTimeout.ShouldBe(239);
 
-            client.SendTimeout = 239;
-            client.SendTimeout.ShouldBe(239);
+            this.client.SendTimeout = 239;
+            this.client.SendTimeout.ShouldBe(239);
         }
 
         [Fact]
         public void GetExecTimeTest()
         {
-            client.ExecutionTime.ShouldBe(client.ExecutionTime);
+            this.client.ExecutionTime.ShouldBe(this.client.ExecutionTime);
         }
 
         [Theory]
@@ -105,11 +100,14 @@ namespace Sharp7.Tests
         public void GetParameterTest(int parameterNumber, int expected)
         {
             int value = -1;
-            var result = client.GetParam(parameterNumber, ref value);
-            if(result == 0)
+            var result = this.client.GetParam(parameterNumber, ref value);
+            if (result == 0)
+            {
                 value.ShouldBe(expected);
-            else
+            } else
+            {
                 result.ShouldBe(0x02500000);
+            }
         }
 
         [Theory]
@@ -130,15 +128,16 @@ namespace Sharp7.Tests
         [InlineData(15, 0)]
         public void SetParameterTest(int parameterNumber, int newValue)
         {
-            var result = client.SetParam(parameterNumber, ref newValue);
+            var result = this.client.SetParam(parameterNumber, ref newValue);
             if (result == 0)
             {
                 int readValue = -1;
-                client.GetParam(parameterNumber, ref readValue);
+                this.client.GetParam(parameterNumber, ref readValue);
                 readValue.ShouldBe(newValue);
-            }
-            else
+            } else
+            {
                 result.ShouldBe(0x02500000);
+            }
         }
     }
 }

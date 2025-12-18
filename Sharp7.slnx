@@ -1,0 +1,4 @@
+<Solution>
+    <Project Path="Sharp7/Sharp7.csproj" />
+    <Project Path="Sharp7.Tests/Sharp7.Tests.csproj" />
+</Solution>

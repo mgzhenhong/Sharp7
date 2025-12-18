@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-
-namespace Sharp7.Tests
+﻿namespace Sharp7.Tests
 {
     internal class S7Consts
     {
@@ -76,8 +71,8 @@ namespace Sharp7.Tests
         /// </summary>
         public S7Server()
         {
-            server = Srv_Create();
-            hArea = new Dictionary<int, GCHandle>();
+            this.server = Srv_Create();
+            this.hArea = new Dictionary<int, GCHandle>();
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -87,13 +82,12 @@ namespace Sharp7.Tests
         /// </summary>
         ~S7Server()
         {
-            foreach (var item in hArea)
+            foreach (var item in this.hArea)
             {
                 GCHandle handle = item.Value;
-                if (handle != null)
-                    handle.Free();
+                handle?.Free();
             }
-            Srv_Destroy(ref server);
+            Srv_Destroy(ref this.server);
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -105,7 +99,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int StartTo(string address)
         {
-            return Srv_StartTo(server, address);
+            return Srv_StartTo(this.server, address);
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -116,7 +110,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int Start()
         {
-            return Srv_Start(server);
+            return Srv_Start(this.server);
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -127,7 +121,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int Stop()
         {
-            return Srv_Stop(server);
+            return Srv_Stop(this.server);
         }
 
         #endregion
@@ -149,11 +143,15 @@ namespace Sharp7.Tests
         {
             Int32 areaUid = (areaCode << 16) + index;
             GCHandle handle = GCHandle.Alloc(pUsrData, GCHandleType.Pinned);
-            int result = Srv_RegisterArea(server, areaCode, index, handle.AddrOfPinnedObject(), size);
+            int result = Srv_RegisterArea(this.server, areaCode, index, handle.AddrOfPinnedObject(), size);
             if (result == 0)
-                hArea.Add(areaUid, handle);
-            else
+            {
+                this.hArea.Add(areaUid, handle);
+            } else
+            {
                 handle.Free();
+            }
+
             return result;
         }
 
@@ -167,16 +165,15 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int UnregisterArea(Int32 areaCode, Int32 index)
         {
-            int result = Srv_UnregisterArea(server, areaCode, index);
+            int result = Srv_UnregisterArea(this.server, areaCode, index);
             if (result == 0)
             {
                 Int32 areaUid = (areaCode << 16) + index;
-                if (hArea.ContainsKey(areaUid)) // should be always true
+                if (this.hArea.ContainsKey(areaUid)) // should be always true
                 {
-                    GCHandle handle = hArea[areaUid];
-                    if (handle != null) // should be always true
-                        handle.Free();
-                    hArea.Remove(areaUid);
+                    GCHandle handle = this.hArea[areaUid];
+                    handle?.Free();
+                    this.hArea.Remove(areaUid);
                 }
             }
             return result;
@@ -192,7 +189,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int LockArea(Int32 areaCode, Int32 index)
         {
-            return Srv_LockArea(server, areaCode, index);
+            return Srv_LockArea(this.server, areaCode, index);
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -205,7 +202,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int UnlockArea(Int32 areaCode, Int32 index)
         {
-            return Srv_UnlockArea(server, areaCode, index);
+            return Srv_UnlockArea(this.server, areaCode, index);
         }
 
         #endregion
@@ -246,7 +243,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int SetEventsCallBack(SrvCallback callback, IntPtr usrPtr)
         {
-            return Srv_SetEventsCallback(server, callback, usrPtr);
+            return Srv_SetEventsCallback(this.server, callback, usrPtr);
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -259,7 +256,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int SetReadEventsCallBack(SrvCallback callback, IntPtr usrPtr)
         {
-            return Srv_SetReadEventsCallback(server, callback, usrPtr);
+            return Srv_SetReadEventsCallback(this.server, callback, usrPtr);
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -272,7 +269,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int SetRwAreaCallBack(SrvRwAreaCallback callback, IntPtr usrPtr)
         {
-            return Srv_SetRWAreaCallback(server, callback, usrPtr);
+            return Srv_SetRWAreaCallback(this.server, callback, usrPtr);
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -285,10 +282,13 @@ namespace Sharp7.Tests
         public bool PickEvent(ref USrvEvent Event)
         {
             Int32 evtReady = new Int32();
-            if (Srv_PickEvent(server, ref Event, ref evtReady) == 0)
+            if (Srv_PickEvent(this.server, ref Event, ref evtReady) == 0)
+            {
                 return evtReady != 0;
-            else
+            } else
+            {
                 return false;
+            }
         }
 
         [DllImport(S7Consts.S7LibName)]
@@ -299,7 +299,7 @@ namespace Sharp7.Tests
         /// <returns>0: No errors. Otherwise see errorcodes</returns>
         public int ClearEvents()
         {
-            return Srv_ClearEvents(server);
+            return Srv_ClearEvents(this.server);
         }
 
         [DllImport(S7Consts.S7LibName, CharSet = CharSet.Ansi)]
@@ -340,12 +340,15 @@ namespace Sharp7.Tests
             get
             {
                 UInt32 mask = new UInt32();
-                if (Srv_GetMask(server, S7Server.MkLog, ref mask) == 0)
+                if (Srv_GetMask(this.server, S7Server.MkLog, ref mask) == 0)
+                {
                     return mask;
-                else
+                } else
+                {
                     return 0;
+                }
             }
-            set => Srv_SetMask(server, S7Server.MkLog, value);
+            set => Srv_SetMask(this.server, S7Server.MkLog, value);
         }
 
         // Property EventMask R/W
@@ -357,12 +360,15 @@ namespace Sharp7.Tests
             get
             {
                 UInt32 mask = new UInt32();
-                if (Srv_GetMask(server, S7Server.MkEvent, ref mask) == 0)
+                if (Srv_GetMask(this.server, S7Server.MkEvent, ref mask) == 0)
+                {
                     return mask;
-                else
+                } else
+                {
                     return 0;
+                }
             }
-            set => Srv_SetMask(server, S7Server.MkEvent, value);
+            set => Srv_SetMask(this.server, S7Server.MkEvent, value);
         }
 
 
@@ -384,12 +390,15 @@ namespace Sharp7.Tests
                 Int32 sStatus = new Int32();
                 Int32 cCount = new Int32();
 
-                if (Srv_GetStatus(server, ref sStatus, ref cStatus, ref cCount) == 0)
+                if (Srv_GetStatus(this.server, ref sStatus, ref cStatus, ref cCount) == 0)
+                {
                     return cStatus;
-                else
+                } else
+                {
                     return -1;
+                }
             }
-            set => Srv_SetCpuStatus(server, value);
+            set => Srv_SetCpuStatus(this.server, value);
         }
 
         // Property Server Status Read Only
@@ -400,10 +409,13 @@ namespace Sharp7.Tests
                 Int32 cStatus = new Int32();
                 Int32 sStatus = new Int32();
                 Int32 cCount = new Int32();
-                if (Srv_GetStatus(server, ref sStatus, ref cStatus, ref cCount) == 0)
+                if (Srv_GetStatus(this.server, ref sStatus, ref cStatus, ref cCount) == 0)
+                {
                     return sStatus;
-                else
+                } else
+                {
                     return -1;
+                }
             }
         }
 
@@ -415,10 +427,13 @@ namespace Sharp7.Tests
                 Int32 cStatus = new Int32();
                 Int32 sStatus = new Int32();
                 Int32 cCount = new Int32();
-                if (Srv_GetStatus(server, ref cStatus, ref sStatus, ref cCount) == 0)
+                if (Srv_GetStatus(this.server, ref cStatus, ref sStatus, ref cCount) == 0)
+                {
                     return cCount;
-                else
+                } else
+                {
                     return -1;
+                }
             }
         }
 

@@ -1,20 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Authors>Federico Barresi</Authors>
-    <Description>The multi-platform Ethernet S7 PLC communication suite</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/fbarresi/Sharp7</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/fbarresi/Sharp7/master/LICENSE</PackageLicenseUrl>
-    <PackageTags>snap7 s7 simatic siemens</PackageTags>
-    <Company />
-    <Version>1.0.0</Version>
-    <PackageIconUrl>https://raw.githubusercontent.com/fbarresi/Sharp7/master/doc/images/logo.jpg</PackageIconUrl>
-    <PackageReleaseNotes>https://github.com/fbarresi/Sharp7/blob/master/CHANGELOG.md</PackageReleaseNotes>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net80</TargetFrameworks>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Authors>Federico Barresi</Authors>
+        <Description>The multi-platform Ethernet S7 PLC communication suite</Description>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageProjectUrl>https://github.com/fbarresi/Sharp7</PackageProjectUrl>
+        <PackageTags>snap7 s7 simatic siemens</PackageTags>
+        <Company />
+        <Version>1.0.0</Version>
+        <PackageReleaseNotes>https://github.com/fbarresi/Sharp7/blob/master/CHANGELOG.md</PackageReleaseNotes>
+    </PropertyGroup>
 
 </Project>

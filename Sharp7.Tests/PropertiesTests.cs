@@ -1,7 +1,4 @@
-﻿using Shouldly;
-using Xunit;
-
-namespace Sharp7.Tests
+﻿namespace Sharp7.Tests
 {
     public class PropertiesTests
     {
@@ -22,7 +19,7 @@ namespace Sharp7.Tests
             string.IsNullOrEmpty(client.Name).ShouldBeFalse();
             client.Name.ShouldBe(name);
         }
-        
+
         [Fact]
         public void PlcHasIp()
         {
@@ -33,7 +30,7 @@ namespace Sharp7.Tests
             string.IsNullOrEmpty(client.PLCIpAddress).ShouldBeFalse();
             client.PLCIpAddress.ShouldBe(ip);
         }
-        
+
         [Fact]
         public void PlcHasNoIp()
         {
@@ -41,21 +38,21 @@ namespace Sharp7.Tests
             client.PLCIpAddress.ShouldBeNull();
             string.IsNullOrEmpty(client.PLCIpAddress).ShouldBeTrue();
         }
-        
+
         [Fact]
         public void PlcToString()
         {
             var client = new S7Client();
             client.ToString().ShouldBe("PLC @0.0.0.0");
         }
-        
+
         [Fact]
         public void PlcToStringWithName()
         {
             var client = new S7Client("Test");
             client.ToString().ShouldBe("PLC Test@0.0.0.0");
         }
-        
+
         [Fact]
         public void PlcToStringWithNameAndIp()
         {
