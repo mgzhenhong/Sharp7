@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace Sharp7
 {
+    public delegate void S7ClientEventHandler(S7Client s7Client);
+    public delegate void S7ClientEventHandler<TEventArgs>(S7Client s7Client, TEventArgs e);
+
     public class S7Client
     {
         #region [Constants and TypeDefs]
@@ -496,12 +499,12 @@ namespace Sharp7
         /// <summary>
         /// The SocketClosed event is raised when the internal socket is closed
         /// </summary>
-        public event Action SocketClosed;
+        public event S7ClientEventHandler SocketClosed;
 
         /// <summary>
         /// The SocketConnectFailed event is raised when the internal socket fails to connect
         /// </summary>
-        public event Action SocketConnectFailed;
+        public event S7ClientEventHandler SocketConnectFailed;
 
         private void CreateSocket() {
             this.Socket = new MsgSocket {
@@ -510,7 +513,7 @@ namespace Sharp7
                 WriteTimeout = DefaultTimeout
             };
             this.Socket.Closed += () => {
-                SocketClosed?.Invoke();
+                SocketClosed?.Invoke(this);
             };
         }
 
@@ -520,6 +523,10 @@ namespace Sharp7
                     this._LastError = this.Socket.Connect(this.PLCIpAddress, this.PLCPort);
                 } catch {
                     this._LastError = S7Consts.errTCPConnectionFailed;
+                }
+
+                if (this._LastError != 0) {
+                    SocketConnectFailed?.Invoke(this);
                 }
             }
             return this._LastError;
