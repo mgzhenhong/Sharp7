@@ -497,6 +497,11 @@ namespace Sharp7
         // Events
 
         /// <summary>
+        /// The Connected event is raised when the internal socket connected and continues succeed
+        /// </summary>
+        public event S7ClientEventHandler Connected;
+
+        /// <summary>
         /// The SocketClosed event is raised when the internal socket is closed
         /// </summary>
         public event S7ClientEventHandler SocketClosed;
@@ -505,6 +510,11 @@ namespace Sharp7
         /// The SocketConnectFailed event is raised when the internal socket fails to connect
         /// </summary>
         public event S7ClientEventHandler SocketConnectFailed;
+
+        /// <summary>
+        /// The ConnectFailed event is raised when the internal socket connected but continues failed
+        /// </summary>
+        public event S7ClientEventHandler ConnectFailed;
 
         private void CreateSocket() {
             this.Socket = new MsgSocket {
@@ -523,17 +533,16 @@ namespace Sharp7
                     this._LastError = this.Socket.Connect(this.PLCIpAddress, this.PLCPort);
                 } catch {
                     this._LastError = S7Consts.errTCPConnectionFailed;
-                }
-
-                if (this._LastError != 0) {
-                    SocketConnectFailed?.Invoke(this);
+                    if (this._LastError != 0) {
+                        SocketConnectFailed?.Invoke(this);
+                    }
                 }
             }
             return this._LastError;
         }
 
         private void RecvPacket(byte[] Buffer, int Start, int Size) {
-            if (this.Connected) {
+            if (this.IsSocketConnected) {
                 this._LastError = this.Socket.Receive(Buffer, Start, Size);
             } else {
                 this._LastError = S7Consts.errTCPNotConnected;
@@ -541,7 +550,7 @@ namespace Sharp7
         }
 
         private void SendPacket(byte[] Buffer, int Len) {
-            if (this.Connected) {
+            if (this.IsSocketConnected) {
                 this._LastError = this.Socket.Send(Buffer, Len);
             } else {
                 this._LastError = S7Consts.errTCPNotConnected;
@@ -681,7 +690,9 @@ namespace Sharp7
             this._LastError = 0;
             this.ExecutionTime = 0;
             int Elapsed = Environment.TickCount;
-            if (!this.Connected) {
+            if (!this.IsSocketConnected) {
+                this.PduSizeNegotiated = 0; // Reset PDU Size Negotiated
+
                 TCPConnect(); // First stage : TCP Connection
                 if (this._LastError == 0) {
                     ISOConnect(); // Second stage : ISOTCP (ISO 8073) Connection
@@ -690,13 +701,15 @@ namespace Sharp7
                     }
                 }
             }
+
             if (this._LastError != 0) {
                 if (this._LastError != 0) {
-                    SocketConnectFailed?.Invoke();
+                    ConnectFailed?.Invoke(this);
                 }
                 Disconnect();
             } else {
                 this.ExecutionTime = Environment.TickCount - Elapsed;
+                Connected?.Invoke(this);
             }
 
             return this._LastError;
@@ -2165,7 +2178,9 @@ namespace Sharp7
             set => this.Socket.WriteTimeout = value;
         }
 
-        public bool Connected => (this.Socket != null) && this.Socket.Connected;
+        public bool IsSocketConnected => (this.Socket != null) && this.Socket.Connected;
+
+        public bool IsConnected => this.IsSocketConnected && this.PduSizeNegotiated > 0;
 
         #endregion
     }
