@@ -521,10 +521,6 @@ namespace Sharp7
                 } catch {
                     this._LastError = S7Consts.errTCPConnectionFailed;
                 }
-
-                if (this._LastError != 0) {
-                    SocketConnectFailed?.Invoke();
-                }
             }
             return this._LastError;
         }
@@ -688,6 +684,9 @@ namespace Sharp7
                 }
             }
             if (this._LastError != 0) {
+                if (this._LastError != 0) {
+                    SocketConnectFailed?.Invoke();
+                }
                 Disconnect();
             } else {
                 this.ExecutionTime = Environment.TickCount - Elapsed;
