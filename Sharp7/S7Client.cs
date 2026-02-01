@@ -814,26 +814,26 @@ namespace Sharp7
 
         #region [Data I/O main functions]
 
-        public int ReadArea(S7Area Area, int DBNumber, int Start, int Amount, S7WordLength WordLen, byte[] Buffer) {
-            return ReadArea((int)Area, DBNumber, Start, Amount, (int)WordLen, Buffer);
+        public int ReadArea(S7Area Area, int DBNumber, int Start, int Amount, S7WordLength WordLen, byte[] Buffer, int BufferOffset = 0) {
+            return ReadArea((int)Area, DBNumber, Start, Amount, (int)WordLen, Buffer, BufferOffset);
         }
 
-        public int ReadArea(S7Area Area, int DBNumber, int Start, int Amount, S7WordLength WordLen, byte[] Buffer, ref int BytesRead) {
-            return ReadArea((int)Area, DBNumber, Start, Amount, (int)WordLen, Buffer, ref BytesRead);
+        public int ReadArea(S7Area Area, int DBNumber, int Start, int Amount, S7WordLength WordLen, byte[] Buffer, int BufferOffset, ref int BytesRead) {
+            return ReadArea((int)Area, DBNumber, Start, Amount, (int)WordLen, Buffer, BufferOffset, ref BytesRead);
         }
-        public int ReadArea(int Area, int DBNumber, int Start, int Amount, int WordLen, byte[] Buffer) {
+        public int ReadArea(int Area, int DBNumber, int Start, int Amount, int WordLen, byte[] Buffer, int BufferOffset = 0) {
             int BytesRead = 0;
-            return ReadArea(Area, DBNumber, Start, Amount, WordLen, Buffer, ref BytesRead);
+            return ReadArea(Area, DBNumber, Start, Amount, WordLen, Buffer, BufferOffset, ref BytesRead);
         }
 
-        public int ReadArea(int Area, int DBNumber, int Start, int Amount, int WordLen, byte[] Buffer, ref int BytesRead) {
+        public int ReadArea(int Area, int DBNumber, int Start, int Amount, int WordLen, byte[] Buffer, int BufferOffset, ref int BytesRead) {
             int Address;
             int NumElements;
             int MaxElements;
             int TotElements;
             int SizeRequested;
             int Length;
-            int Offset = 0;
+            int Offset = BufferOffset;
             int WordSize = 1;
 
             this._LastError = 0;
@@ -895,7 +895,7 @@ namespace Sharp7
                 // Num elements
                 this.PDU.SetWordAt(23, (ushort)NumElements);
 
-                // Address into the PLC (only 3 bytes)           
+                // Address into the PLC (only 3 bytes)
                 this.PDU[30] = (byte)(Address & 0x0FF);
                 Address >>= 8;
                 this.PDU[29] = (byte)(Address & 0x0FF);
