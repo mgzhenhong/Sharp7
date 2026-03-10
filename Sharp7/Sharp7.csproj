@@ -2,17 +2,25 @@
 
     <PropertyGroup>
         <TargetFrameworks>net80</TargetFrameworks>
+        <Authors>Federico Barresi</Authors>
+        <Description>The multi-platform Ethernet S7 PLC communication suite</Description>
+        <Version>1.0.0</Version>
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+
+    <!--
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <DocumentationFile>bin\Release\$(AssemblyName).xml</DocumentationFile>
         <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <Authors>Federico Barresi</Authors>
-        <Description>The multi-platform Ethernet S7 PLC communication suite</Description>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageProjectUrl>https://github.com/fbarresi/Sharp7</PackageProjectUrl>
         <PackageTags>snap7 s7 simatic siemens</PackageTags>
-        <Company />
-        <Version>1.0.0</Version>
         <PackageReleaseNotes>https://github.com/fbarresi/Sharp7/blob/master/CHANGELOG.md</PackageReleaseNotes>
+        <Company />
     </PropertyGroup>
+    -->
 
 </Project>
