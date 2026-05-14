@@ -74,32 +74,40 @@ namespace Sharp7
             return this.LastError;
         }
 
-        private int WaitForData(int Size, int Timeout) {
-            bool Expired = false;
-            int SizeAvail;
-            int Elapsed = Environment.TickCount;
+        /// <summary>
+        /// 等待TCP中已经有数据到达
+        /// </summary>
+        /// <param name="sizeNeeded">等待到达的数据量</param>
+        /// <param name="timeout">超时时长(毫秒)</param>
+        /// <returns></returns>
+        private int WaitForData(int sizeNeeded, int timeout) {
+            bool timeouted = false;
+            int sizeAvailable;
+            int startTick = Environment.TickCount;
             this.LastError = 0;
             try {
-                SizeAvail = this.TCPSocket.Available;
-                while ((SizeAvail < Size) && (!Expired)) {
+                sizeAvailable = this.TCPSocket.Available;
+                while ((sizeAvailable < sizeNeeded) && (!timeouted)) {
                     Thread.Sleep(2);
                     if (this.TCPSocket is null) {
                         this.LastError = S7Consts.errTCPDataReceive;
                         break;
                     }
 
-                    SizeAvail = this.TCPSocket.Available;
-                    Expired = Environment.TickCount - Elapsed > Timeout;
+                    sizeAvailable = this.TCPSocket.Available;
+                    timeouted = Environment.TickCount - startTick > timeout;
+
                     // If timeout we clean the buffer
-                    if (Expired && (SizeAvail > 0)) {
+                    // 如果已超时且存在可读数据, 则通过 Receive 清空缓冲区
+                    if (timeouted && (sizeAvailable > 0)) {
                         try {
                             if (this.TCPSocket is null) {
                                 this.LastError = S7Consts.errTCPDataReceive;
                                 break;
                             }
 
-                            byte[] Flush = new byte[SizeAvail];
-                            this.TCPSocket.Receive(Flush, 0, SizeAvail, SocketFlags.None);
+                            byte[] bufferToFlush = new byte[sizeAvailable];
+                            this.TCPSocket.Receive(bufferToFlush, 0, sizeAvailable, SocketFlags.None);
                         } catch {
                             this.LastError = S7Consts.errTCPDataReceive;
                         }
@@ -109,7 +117,7 @@ namespace Sharp7
                 this.LastError = S7Consts.errTCPDataReceive;
             }
 
-            if (Expired) {
+            if (timeouted) {
                 this.LastError = S7Consts.errTCPDataReceive;
             }
 
