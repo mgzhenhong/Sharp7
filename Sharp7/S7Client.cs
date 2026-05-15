@@ -609,8 +609,8 @@ namespace Sharp7
                 Size = RecvIsoPacket();
                 if (this._LastError == 0) {
                     if (Size == 22) {
-                        if (this.LastPDUType != (byte)0xD0) // 0xD0 = CC Connection confirm
-{
+                        if (this.LastPDUType != (byte)0xD0) {
+                            // 0xD0 = CC Connection confirm
                             this._LastError = S7Consts.errIsoConnect;
                         }
                     } else {
@@ -661,7 +661,6 @@ namespace Sharp7
                 Code7NoPasswordToSet or Code7NoPasswordToClear => S7Consts.errCliNoPasswordToSetOrClear,
                 _ => S7Consts.errCliFunctionRefused,
             };
-            ;
         }
 
         #endregion
