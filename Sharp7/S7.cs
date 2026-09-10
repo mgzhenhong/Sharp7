@@ -65,7 +65,6 @@ namespace Sharp7
             } else {
                 buffer[pos] = (byte)(buffer[pos] & ~Mask[bit]);
             }
-
         }
 
         #endregion
@@ -458,7 +457,7 @@ namespace Sharp7
 
         public static void SetLTODAt(this byte[] buffer, int pos, DateTime value) {
             TimeSpan Time = value.TimeOfDay;
-            SetLIntAt(buffer, pos, (Int64)Time.Ticks * 100);
+            SetLIntAt(buffer, pos, Time.Ticks * 100);
         }
 
         public static TimeSpan GetLTODAsTimeSpanAt(this byte[] buffer, int pos) {
@@ -470,7 +469,7 @@ namespace Sharp7
         }
 
         public static void SetLTODAt(this byte[] buffer, int pos, TimeSpan value) {
-            SetLIntAt(buffer, pos, (Int64)value.Ticks * 100);
+            SetLIntAt(buffer, pos, value.Ticks * 100);
         }
 
         #endregion
@@ -542,7 +541,7 @@ namespace Sharp7
 
         // Thanks to Pablo Agirre 
         public static string GetStringAt(this byte[] buffer, int pos) {
-            int size = (int)buffer[pos + 1];
+            int size = buffer[pos + 1];
             return Encoding.UTF8.GetString(buffer, pos + 2, size);
         }
 

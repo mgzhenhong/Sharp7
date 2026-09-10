@@ -482,7 +482,6 @@ namespace Sharp7
         private static readonly int IsoHSize = 7; // TPKT+COTP Header Size
 
         // Properties
-        private int _PduSizeRequested = 480;
 
         // Privates
         private byte LocalTSAP_HI;
@@ -573,7 +572,7 @@ namespace Sharp7
                     if (Size == IsoHSize) {
                         RecvPacket(this.PDU, 4, 3); // Skip remaining 3 bytes and Done is still false
                     } else {
-                        if ((Size > this._PduSizeRequested + IsoHSize) || (Size < MinPduSize)) {
+                        if ((Size > this.PduSizeRequested + IsoHSize) || (Size < MinPduSize)) {
                             this._LastError = S7Consts.errIsoInvalidPDU;
                         } else {
                             Done = true; // a valid Length !=7 && >16 && <247
@@ -609,7 +608,7 @@ namespace Sharp7
                 Size = RecvIsoPacket();
                 if (this._LastError == 0) {
                     if (Size == 22) {
-                        if (this.LastPDUType != (byte)0xD0) {
+                        if (this.LastPDUType != 0xD0) {
                             // 0xD0 = CC Connection confirm
                             this._LastError = S7Consts.errIsoConnect;
                         }
@@ -624,7 +623,7 @@ namespace Sharp7
         private int NegotiatePduLength() {
             int Length;
             // Set PDU Size Requested
-            this.S7_PN.SetWordAt(23, (ushort)this._PduSizeRequested);
+            this.S7_PN.SetWordAt(23, (ushort)this.PduSizeRequested);
             // Sends the connection request telegram
             SendPacket(this.S7_PN);
             if (this._LastError == 0) {
@@ -1004,7 +1003,7 @@ namespace Sharp7
                 Length = DataSize + 4;
                 this.PDU.SetWordAt(15, (ushort)Length);
                 // Function
-                this.PDU[17] = (byte)0x05;
+                this.PDU[17] = 0x05;
                 // Set DB Number
                 this.PDU[27] = (byte)Area;
                 if (Area == (int)S7Area.DB) {
@@ -1049,7 +1048,7 @@ namespace Sharp7
                     Length = RecvIsoPacket();
                     if (this._LastError == 0) {
                         if (Length == 22) {
-                            if (this.PDU[21] != (byte)0xFF) {
+                            if (this.PDU[21] != 0xFF) {
                                 this._LastError = CpuError(this.PDU[21]);
                             }
                         } else {
@@ -1153,7 +1152,7 @@ namespace Sharp7
                 // Get the Item
                 Array.Copy(this.PDU, Offset, S7ItemRead, 0, Length - Offset);
                 if (S7ItemRead[0] == 0xff) {
-                    ItemSize = (int)S7ItemRead.GetWordAt(2);
+                    ItemSize = S7ItemRead.GetWordAt(2);
                     if (S7ItemRead[1] is not TS_ResOctet and not TS_ResReal and not TS_ResBit) {
                         ItemSize >>= 3;
                     }
@@ -1272,7 +1271,7 @@ namespace Sharp7
                     if (this.PDU[c + 21] == 0xFF) {
                         Items[c].Result = 0;
                     } else {
-                        Items[c].Result = CpuError((ushort)this.PDU[c + 21]);
+                        Items[c].Result = CpuError(this.PDU[c + 21]);
                     }
                 }
                 this.ExecutionTime = Environment.TickCount - Elapsed;
@@ -1650,7 +1649,7 @@ namespace Sharp7
                     SendPacket(this.S7_SZL_FIRST);
                 } else {
                     this.S7_SZL_NEXT.SetWordAt(11, ++Seq_out);
-                    this.S7_SZL_NEXT[24] = (byte)Seq_in;
+                    this.S7_SZL_NEXT[24] = Seq_in;
                     SendPacket(this.S7_SZL_NEXT);
                 }
                 if (this._LastError != 0) {
@@ -1662,11 +1661,11 @@ namespace Sharp7
                     if (First) {
                         if (Length > 32) // the minimum expected
                         {
-                            if ((this.PDU.GetWordAt(27) == 0) && (this.PDU[29] == (byte)0xFF)) {
+                            if ((this.PDU.GetWordAt(27) == 0) && (this.PDU[29] == 0xFF)) {
                                 // Gets Amount of this slice
                                 DataSZL = this.PDU.GetWordAt(31) - 8; // Skips extra params (ID, Index ...)
                                 Done = this.PDU[26] == 0x00;
-                                Seq_in = (byte)this.PDU[24]; // Slice sequence
+                                Seq_in = this.PDU[24]; // Slice sequence
                                 SZL.Header.LENTHDR = this.PDU.GetWordAt(37);
                                 SZL.Header.N_DR = this.PDU.GetWordAt(39);
                                 Array.Copy(this.PDU, 41, SZL.Data, Offset, DataSZL);
@@ -1682,11 +1681,11 @@ namespace Sharp7
                     } else {
                         if (Length > 32) // the minimum expected
                         {
-                            if ((this.PDU.GetWordAt(27) == 0) && (this.PDU[29] == (byte)0xFF)) {
+                            if ((this.PDU.GetWordAt(27) == 0) && (this.PDU[29] == 0xFF)) {
                                 // Gets Amount of this slice
                                 DataSZL = this.PDU.GetWordAt(31);
                                 Done = this.PDU[26] == 0x00;
-                                Seq_in = (byte)this.PDU[24]; // Slice sequence
+                                Seq_in = this.PDU[24]; // Slice sequence
                                 Array.Copy(this.PDU, 37, SZL.Data, Offset, DataSZL);
                                 Offset += DataSZL;
                                 SZL.Header.LENTHDR += SZL.Header.LENTHDR;
@@ -2128,7 +2127,7 @@ namespace Sharp7
         }
 
         public int RequestedPduLength() {
-            return this._PduSizeRequested;
+            return this.PduSizeRequested;
         }
 
         public int NegotiatedPduLength() {
@@ -2144,7 +2143,7 @@ namespace Sharp7
         public int PduSizeNegotiated { get; private set; } = 0;
 
         public int PduSizeRequested {
-            get => this._PduSizeRequested;
+            get;
             set {
                 if (value < MinPduSizeToRequest) {
                     value = MinPduSizeToRequest;
@@ -2154,9 +2153,9 @@ namespace Sharp7
                     value = MaxPduSizeToRequest;
                 }
 
-                this._PduSizeRequested = value;
+                field = value;
             }
-        }
+        } = 480;
 
         public string PLCIpAddress { get; private set; }
 

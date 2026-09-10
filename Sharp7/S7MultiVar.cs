@@ -67,14 +67,14 @@ namespace Sharp7
                 if (AdjustWordLength(Area, ref WordLen, ref Amount, ref Start)) {
                     this.Items[this.Count].Area = Area;
                     this.Items[this.Count].WordLen = WordLen;
-                    this.Items[this.Count].Result = (int)S7Consts.errCliItemNotAvailable;
+                    this.Items[this.Count].Result = S7Consts.errCliItemNotAvailable;
                     this.Items[this.Count].DBNumber = DBNumber;
                     this.Items[this.Count].Start = Start;
                     this.Items[this.Count].Amount = Amount;
                     GCHandle handle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
 
                     if (IntPtr.Size == 4) {
-                        this.Items[this.Count].pData = (IntPtr)(handle.AddrOfPinnedObject().ToInt32() + (Offset * Marshal.SizeOf(typeof(T))));
+                        this.Items[this.Count].pData = handle.AddrOfPinnedObject().ToInt32() + (Offset * Marshal.SizeOf(typeof(T)));
                     } else {
                         this.Items[this.Count].pData = (IntPtr)(handle.AddrOfPinnedObject().ToInt64() + (Offset * Marshal.SizeOf(typeof(T))));
                     }
